@@ -68,6 +68,8 @@ Controls:
 
 Notes:
 
+   All work is done in main.c
+
    Window size is 800x800.
 
    The paddle cannot move beyond the window boundaries.
