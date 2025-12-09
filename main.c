@@ -1,7 +1,10 @@
 
-#include <GL/gl.h>
+// #include "GLUT/glut.h"
+#include "GL/freeglut.h"
+//#include "GL/freeglut_ext.h"
+//#include <GL/gl.h>
 #include <stdio.h>
-#include <GL/glut.h>
+//#include <GL/glut.h>
 #include <stdbool.h>
 
 double x=100.0;
@@ -65,7 +68,12 @@ void draw_shapes(double x, double y){
   
   
 }
-
+void key_listener(unsigned char key, int x, int y){
+  switch (key) {
+  case 0x1b: //esc
+    glutLeaveMainLoop();	
+  }
+}
 void special_key_listener(int key, int k, int l){
 
   if (!started){
@@ -80,7 +88,9 @@ void special_key_listener(int key, int k, int l){
     case GLUT_KEY_RIGHT:
       started=true;
       break;
+
     }
+
     glClearColor(0,0,0,1);
       
     
@@ -197,6 +207,7 @@ int main(int argc, char ** argv){
   glutDisplayFunc(display);
   glutIdleFunc(animate);
   glutSpecialFunc(special_key_listener);
+  glutKeyboardFunc(key_listener);
   
 
   glutMainLoop();
