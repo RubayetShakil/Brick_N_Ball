@@ -1,15 +1,12 @@
 
-// #include "GLUT/glut.h"
-#include "GL/freeglut.h"
-//#include "GL/freeglut_ext.h"
-//#include <GL/gl.h>
 #include <stdio.h>
-//#include <GL/glut.h>
+#include <GL/glut.h>
 #include <stdbool.h>
+#include <time.h>
 
 double x=100.0;
 double y=-790.0;
-double ball_speed=0.1;
+double ball_speed_ps=600;
 bool started=false;
 double ball_x=0.0;
 double ball_y=-790.0;
@@ -20,7 +17,18 @@ bool restart=false;
 bool brick[16][16];
 double brick_x[16][16];
 double brick_y[16][16];
-int score=0;
+time_t currentTime;
+
+double getDeltatime(){
+  
+  static clock_t last=0;
+  clock_t now=clock();
+
+  double delta=(double)(now-last)/CLOCKS_PER_SEC;
+  last=now;
+
+  return delta;
+}
 
 void draw_shapes(double x, double y){
   
@@ -68,12 +76,7 @@ void draw_shapes(double x, double y){
   
   
 }
-void key_listener(unsigned char key, int x, int y){
-  switch (key) {
-  case 0x1b: //esc
-    glutLeaveMainLoop();	
-  }
-}
+
 void special_key_listener(int key, int k, int l){
 
   if (!started){
@@ -88,9 +91,7 @@ void special_key_listener(int key, int k, int l){
     case GLUT_KEY_RIGHT:
       started=true;
       break;
-
     }
-
     glClearColor(0,0,0,1);
       
     
@@ -130,6 +131,9 @@ void display(){
 
 void animate(){
   
+  double dt=getDeltatime();
+  double ball_speed=ball_speed_ps*dt;
+  
   if (!started && !restart){
     ball_x=x-100;
     ball_y=y+15;
@@ -149,7 +153,7 @@ void animate(){
       ball_speed=0.1;
     }
   }else{
-
+    
     ball_x+=dx*ball_speed;
     ball_y+=dy*ball_speed;
 
@@ -177,8 +181,6 @@ void animate(){
   
   if (ball_x>=x-200 && ball_x<=x && ball_y+dy*ball_speed<=y+5 && ball_y+dy*ball_speed>=y-15){
     dy*=-1;
-    score+=1;
-    printf("%d",score);
   }
     
   glutPostRedisplay();
@@ -186,7 +188,6 @@ void animate(){
 
 
 int main(int argc, char ** argv){
-  
 
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_RGBA);
@@ -203,13 +204,14 @@ int main(int argc, char ** argv){
       brick_y[i][j]=800-j*50;
     }
   }
-  glClearColor(0,1,0,1);
+
   glutDisplayFunc(display);
   glutIdleFunc(animate);
   glutSpecialFunc(special_key_listener);
-  glutKeyboardFunc(key_listener);
-  
 
+  
+  
+ 
   glutMainLoop();
 } 
 
